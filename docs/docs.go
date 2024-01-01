@@ -68,11 +68,26 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Query Single People.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "number to query",
+                        "name": "num",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.QuerySinglePeopleRes"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.Err"
                         }
                     }
                 }
@@ -91,11 +106,28 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Remove a user.",
+                "parameters": [
+                    {
+                        "description": "Remove user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.RemoveSinglePersonReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.RemoveSinglePersonRes"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.Err"
                         }
                     }
                 }
@@ -144,6 +176,53 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.QuerySinglePeopleRes": {
+            "type": "object",
+            "properties": {
+                "user_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.UserRes"
+                    }
+                }
+            }
+        },
+        "api.RemoveSinglePersonReq": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.RemoveSinglePersonRes": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.UserRes": {
+            "type": "object",
+            "properties": {
+                "date_num": {
+                    "type": "integer"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

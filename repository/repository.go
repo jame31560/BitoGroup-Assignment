@@ -41,13 +41,27 @@ func (repo *repository) MatchUser(user *model.User) []string {
 		case user.Gender != u.Gender:
 		case (user.Gender == model.Men && user.Height > u.Height) || (user.Gender == model.Woman && user.Height < u.Height):
 		default:
-			user.DateNum -= 1
+			user.DateNum--
 			user.MatchUserList = append(user.MatchUserList, u.ID)
-			u.DateNum -= 1
+			u.DateNum--
 			u.MatchUserList = append(u.MatchUserList, user.ID)
 		}
 	}
 	return user.MatchUserList
+}
+
+func (repo *repository) QuerySinglePeople(num int) []*model.User {
+	result := make([]*model.User, 0)
+	for _, user := range repo.userList {
+		if num <= 0 {
+			break
+		}
+		if user.DateNum > 0 {
+			result = append(result, user)
+			num--
+		}
+	}
+	return result
 }
 
 func (repo *repository) RemoveUser(string) {

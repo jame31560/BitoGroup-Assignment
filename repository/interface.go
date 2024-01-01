@@ -8,4 +8,5 @@ type RepositoryInterface interface {
 	GetUser(string) *model.User
 	MatchUser(*model.User) []string
 	RemoveUser(string)
+  QuerySinglePeople(int) []*model.User
 }
