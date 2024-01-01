@@ -64,8 +64,28 @@ func (repo *repository) QuerySinglePeople(num int) []*model.User {
 	return result
 }
 
-func (repo *repository) RemoveUser(string) {
-	return
+func (repo *repository) RemoveUser(userToRemove *model.User) {
+	for _, matchUserID := range userToRemove.MatchUserList {
+		matchUser := repo.GetUser(matchUserID)
+		updatedMatchUserList := make([]string, 0)
+		for _, id := range matchUser.MatchUserList {
+			if id == userToRemove.ID {
+				updatedMatchUserList = append(updatedMatchUserList, id)
+			}
+		}
+		matchUser.MatchUserList = updatedMatchUserList
+		matchUser.DateNum++
+	}
+
+	updatedList := make([]*model.User, 0)
+	for _, user := range repo.userList {
+		if user.ID == userToRemove.ID {
+			continue
+		}
+
+		updatedList = append(updatedList, user)
+	}
+	repo.userList = updatedList
 }
 
 // NewRepository

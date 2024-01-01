@@ -80,7 +80,30 @@ func (a *api) AddSinglePersonAndMatch(c *gin.Context) {
 // @Failure default {object} Err
 // @Router /remove_user [delete]
 func (a *api) RemoveSinglePerson(c *gin.Context) {
+	reqData, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		return
+	}
 
+	req := &RemoveSinglePersonReq{}
+
+	err = json.Unmarshal(reqData, req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":   "error",
+			"data":      "Input fromat Error",
+			"timestamp": time.Now().Unix(),
+		})
+		return
+	}
+
+  user := a.repo.GetUser(req.UserID)
+
+	a.repo.RemoveUser(user)
+
+	c.JSON(http.StatusOK, RemoveSinglePersonRes{
+		UserID: req.UserID,
+	})
 }
 
 // @Summary	Query Single People.
@@ -94,9 +117,9 @@ func (a *api) RemoveSinglePerson(c *gin.Context) {
 // @Failure default {object} Err
 // @Router /query_single_user [get]
 func (a *api) QuerySinglePeople(c *gin.Context) {
-  numString := c.Request.URL.Query().Get("num")
-  num, err := strconv.Atoi(numString)
-  if err != nil {
+	numString := c.Request.URL.Query().Get("num")
+	num, err := strconv.Atoi(numString)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message":   "error",
 			"data":      "Input fromat Error",
@@ -105,21 +128,21 @@ func (a *api) QuerySinglePeople(c *gin.Context) {
 		return
 	}
 
-  result:= QuerySinglePeopleRes{
-    UserList: make([]*UserRes, 0),
-  }
+	result := QuerySinglePeopleRes{
+		UserList: make([]*UserRes, 0),
+	}
 
-  userList := a.repo.QuerySinglePeople(num)
+	userList := a.repo.QuerySinglePeople(num)
 
-  for _, user := range userList {
-    result.UserList = append(result.UserList, &UserRes{
-      ID: user.ID,
-      Name: user.Name,
-      Height: user.Height,
-      Gender: int8(user.Gender),
-      DateNum: user.DateNum,
-    })
-  }
+	for _, user := range userList {
+		result.UserList = append(result.UserList, &UserRes{
+			ID:      user.ID,
+			Name:    user.Name,
+			Height:  user.Height,
+			Gender:  int8(user.Gender),
+			DateNum: user.DateNum,
+		})
+	}
 
-  c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, result)
 }
