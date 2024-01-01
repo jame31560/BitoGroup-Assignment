@@ -15,9 +15,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/example/helloworld": {
-            "get": {
-                "description": "do ping",
+        "/add_user": {
+            "post": {
+                "description": "Add a new user to the matching system and find any possible matches for the new user.",
                 "consumes": [
                     "application/json"
                 ],
@@ -25,9 +25,72 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "example"
+                    "user"
                 ],
-                "summary": "ping example",
+                "summary": "Add a person and match",
+                "parameters": [
+                    {
+                        "description": "Add user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AddSinglePersonAndMatchReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/api.AddSinglePersonAndMatchRes"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/api.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/query_single_user": {
+            "get": {
+                "description": "Find the most N possible matched single people, where N is a request parameter.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Query Single People.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/remove_user": {
+            "delete": {
+                "description": "Remove a user from the matching system so that the user cannot be matched anymore.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Remove a user.",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -38,6 +101,53 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "definitions": {
+        "api.AddSinglePersonAndMatchReq": {
+            "type": "object",
+            "properties": {
+                "date_num": {
+                    "type": "integer"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.AddSinglePersonAndMatchRes": {
+            "type": "object",
+            "properties": {
+                "match_user_list": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Err": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        }
     }
 }`
 
@@ -45,7 +155,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
-	BasePath:         "/api/v1",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "",
 	Description:      "",

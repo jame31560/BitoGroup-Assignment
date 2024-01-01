@@ -1,42 +1,27 @@
 package main
 
 import (
-	"net/http"
+	"tinder/api"
 	"tinder/docs"
+	"tinder/repository"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	// "github.com/swaggo/files"
-	// "github.com/swaggo/gin-swagger"
 )
 
-//	@BasePath	/api/v1
-
-// PingExample godoc
-//
-//	@Summary	ping example
-//	@Schemes
-//	@Description	do ping
-//	@Tags			example
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{string}	Helloworld
-//	@Router			/example/helloworld [get]
-func Helloworld(g *gin.Context) {
-	g.JSON(http.StatusOK, "helloworld")
-}
-
 func main() {
+	repo := repository.NewRepository()
+	api := api.NewApi(repo)
+
 	r := gin.Default()
-  docs.SwaggerInfo.BasePath = "/api/v1"
-  v1 := r.Group("/api/v1")
-   {
-      eg := v1.Group("/example")
-      {
-         eg.GET("/helloworld",Helloworld)
-      }
-   }
-  r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-  r.Run(":8080")
+	docs.SwaggerInfo.BasePath = "/api"
+	apiGroup := r.Group("/api")
+	{
+		apiGroup.POST("/add_user", api.AddSinglePersonAndMatch)
+		apiGroup.DELETE("/remove_user", api.RemoveSinglePerson)
+		apiGroup.GET("/query_single_user", api.QuerySinglePeople)
+	}
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.Run(":8080")
 }

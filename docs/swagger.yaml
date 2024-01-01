@@ -1,12 +1,69 @@
-basePath: /api/v1
+definitions:
+  api.AddSinglePersonAndMatchReq:
+    properties:
+      date_num:
+        type: integer
+      gender:
+        type: integer
+      height:
+        type: number
+      name:
+        type: string
+    type: object
+  api.AddSinglePersonAndMatchRes:
+    properties:
+      match_user_list:
+        items:
+          type: string
+        type: array
+      user_id:
+        type: string
+    type: object
+  api.Err:
+    properties:
+      data:
+        type: string
+      message:
+        type: string
+      time:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
-  /example/helloworld:
+  /add_user:
+    post:
+      consumes:
+      - application/json
+      description: Add a new user to the matching system and find any possible matches
+        for the new user.
+      parameters:
+      - description: Add user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddSinglePersonAndMatchReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api.AddSinglePersonAndMatchRes'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/api.Err'
+      summary: Add a person and match
+      tags:
+      - user
+  /query_single_user:
     get:
       consumes:
       - application/json
-      description: do ping
+      description: Find the most N possible matched single people, where N is a request
+        parameter.
       produces:
       - application/json
       responses:
@@ -14,7 +71,23 @@ paths:
           description: OK
           schema:
             type: string
-      summary: ping example
+      summary: Query Single People.
       tags:
-      - example
+      - user
+  /remove_user:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a user from the matching system so that the user cannot
+        be matched anymore.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Remove a user.
+      tags:
+      - user
 swagger: "2.0"
